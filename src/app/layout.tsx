@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   authors: [{ name: "TextBlast" }],
   keywords: ["TextBlast", "Bulk SMS", "SMS Marketing", "Nigeria", "Messaging Platform"],
   themeColor: "#FF6B4A",
-  metadataBase: new URL("https://textblast.vercel.app"), // replace later with real domain
+  metadataBase: new URL("https://text-blast.vercel.app"), // replace later with real domain
 };
 
 export const viewport: Viewport = {

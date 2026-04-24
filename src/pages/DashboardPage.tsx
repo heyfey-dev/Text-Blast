@@ -1,34 +1,55 @@
 "use client";
 
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import DashboardLayout from '@/Components/DashboardLayout';
 import { useRouter } from "next/navigation";
 import { CreditCard, Send, AlertTriangle, ArrowUpRight } from 'lucide-react';
 
+interface Stat {
+  label: string;
+  value: string | number;
+  icon: React.ElementType;
+  color: string;
+}
+
 export default function DashboardPage() {
   const router = useRouter();
 
-  const stats = [
-    {
-      label: 'Available Credits',
-      value: '5,000',
-      icon: CreditCard,
-      color: 'bg-emerald-100 text-emerald-600',
-    },
-    {
-      label: 'Total SMS Sent',
-      value: '12,847',
-      icon: Send,
-      color: 'bg-blue-100 text-blue-600',
-    },
-    {
-      label: 'Failed SMS',
-      value: '23',
-      icon: AlertTriangle,
-      color: 'bg-red-100 text-red-600',
-    },
-  ];
+   const [stats, setStats] = useState<Stat[]>([
+    { label: 'Available Credits', value: 0, icon: CreditCard, color: 'bg-emerald-100 text-emerald-600' },
+    { label: 'Total SMS Sent', value: 0, icon: Send, color: 'bg-blue-100 text-blue-600' },
+    { label: 'Failed SMS', value: 0, icon: AlertTriangle, color: 'bg-red-100 text-red-600' },
+  ]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+       const res = await fetch("http://localhost:4000/api/stats", {
+          method: "GET",
+          credentials: "include", // send HTTP-only cookie
+        });
+        if (!res.ok) throw new Error('Failed to fetch stats');
+        const data = await res.json();
+
+        // Map API response to your stats format
+        setStats([
+          { label: 'Available Credits', value: data.availableCredits, icon: CreditCard, color: 'bg-emerald-100 text-emerald-600' },
+          { label: 'Total SMS Sent', value: data.totalSmsSent, icon: Send, color: 'bg-blue-100 text-blue-600' },
+          { label: 'Failed SMS', value: data.failedSms, icon: AlertTriangle, color: 'bg-red-100 text-red-600' },
+        ]);
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchStats();
+  }, []);
+
+
 
   const recentActivity = [
     {
@@ -85,22 +106,25 @@ export default function DashboardPage() {
     <DashboardLayout currentPage="dashboard" pageTitle="Dashboard Overview">
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {stats.map((stat, index) => (
-          <div
-            key={index}
-            className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"
-          >
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${stat.color}`}>
-              <stat.icon size={24} />
+        {loading ? (
+          <p>Loading stats...</p>
+        ) : (
+          stats.map((stat, index) => (
+            <div
+              key={index}
+              className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"
+            >
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${stat.color}`}>
+                <stat.icon size={24} />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500 mb-1">{stat.label}</p>
+                <h3 className="text-2xl font-extrabold text-[#1A1A2E]">{stat.value}</h3>
+              </div>
             </div>
-            <div>
-              <p className="text-sm font-medium text-gray-500 mb-1">{stat.label}</p>
-              <h3 className="text-2xl font-extrabold text-[#1A1A2E]">{stat.value}</h3>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
-
       {/* Recent Activity */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="p-6 border-b border-gray-100 flex justify-between items-center">

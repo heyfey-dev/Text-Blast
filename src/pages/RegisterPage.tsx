@@ -17,19 +17,48 @@ function RegisterPageContent() {
  
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setIsLoading(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+  const form = e.target as HTMLFormElement;
+  const fullName = (form[0] as HTMLInputElement).value;
+  const email = (form[1] as HTMLInputElement).value;
+  const password = (form[2] as HTMLInputElement).value;
+  const confirmPassword = (form[3] as HTMLInputElement).value;
+
+  if (password !== confirmPassword) {
+    alert("Passwords do not match");
     setIsLoading(false);
+    return;
+  }
 
-   console.log("account created");
+  try {
+    const res = await fetch("http://localhost:4000/api/auth/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ fullName, email, password }),
+      credentials: "include" // important for HTTP-only cookies
+    });
 
-    // Navigate to login page
-    router.push("/login");
-  };
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Signup failed");
+    }
+
+    console.log("Account created:", data.user);
+
+    router.push("/login"); // redirect to login page
+  } catch (err: any) {
+    console.error(err);
+    alert(err.message);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-[#FAFAF7] flex flex-col items-center justify-center p-4">

@@ -1,0 +1,7 @@
+'use client'
+
+import  UserManagementPage  from '@/pages/admin/UserManagementPage'
+
+export default function Page() {
+  return <UserManagementPage />
+}

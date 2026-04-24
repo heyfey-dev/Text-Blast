@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DashboardLayout from '@/Components/DashboardLayout';
 import { ChangePasswordModal } from '@/Components/ChangePasswordModal';
 
@@ -16,7 +16,9 @@ function ProfilePageContent() {
   const [senderId, setSenderId] = useState('TextBlast');
   const [isSaving, setIsSaving] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-
+const [fullName, setFullName] = useState('');
+const [email, setEmail] = useState('');
+const [loading, setLoading] = useState(true);
 
   const handleSaveProfile = async () => {
     setIsSaving(true);
@@ -31,17 +33,46 @@ function ProfilePageContent() {
     setIsPasswordModalOpen(false);
   };
 
+
+  useEffect(() => {
+  async function fetchProfile() {
+    try {
+      const res = await fetch("http://localhost:4000/api/user/me", {
+        method: "GET",
+        credentials: "include", 
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch profile");
+
+      const data = await res.json();
+
+      setFullName(data.name);
+      setEmail(data.email);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  fetchProfile();
+}, []);
+
   return (
     <DashboardLayout currentPage="profile" pageTitle="My Profile">
       <div className="max-w-2xl mx-auto space-y-8">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="p-6 sm:p-8 border-b border-gray-100 flex flex-col sm:flex-row items-center gap-6">
             <div className="w-24 h-24 rounded-full bg-[#1A1A2E] text-white flex items-center justify-center text-3xl font-bold shadow-xl ring-4 ring-white">
-              JD
+              {fullName
+    ? fullName.split(' ').map(n => n[0]).join('').toUpperCase()
+    : '--'}
             </div>
             <div className="text-center sm:text-left">
-              <h2 className="text-2xl font-bold text-[#1A1A2E]">John Doe</h2>
-              <p className="text-gray-500">Member since Oct 2023</p>
+              <h2 className="text-2xl font-bold text-[#1A1A2E]">
+  {loading ? "Loading..." : fullName}
+</h2>
+              
             </div>
           </div>
 
@@ -52,11 +83,11 @@ function ProfilePageContent() {
               <div className="relative">
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                 <input
-                  type="text"
-                  value="John Doe"
-                  readOnly
-                  className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-500 cursor-not-allowed"
-                />
+  type="text"
+  value={loading ? "Loading..." : fullName}
+  readOnly
+  className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-500 cursor-not-allowed"
+/>
               </div>
             </div>
 
@@ -65,12 +96,12 @@ function ProfilePageContent() {
               <label className="block text-sm font-bold text-[#1A1A2E] mb-2">Email Address</label>
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="email"
-                  value="john@example.com"
-                  readOnly
-                  className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-500 cursor-not-allowed"
-                />
+               <input
+  type="email"
+  value={loading ? "Loading..." : email}
+  readOnly
+  className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-500 cursor-not-allowed"
+/>
               </div>
             </div>
 

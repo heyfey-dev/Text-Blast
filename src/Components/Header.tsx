@@ -1,7 +1,7 @@
 // Components/Header.tsx
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Bell, Menu } from "lucide-react";
 
 interface HeaderProps {
@@ -9,7 +9,42 @@ interface HeaderProps {
   onToggleSidebar: () => void;
 }
 
+interface User {
+  name: string;
+  email: string;
+}
+
 export function Header({ title, onToggleSidebar }: HeaderProps) {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/api/user/me", {
+          method: "GET",
+          credentials: "include", // send HTTP-only cookie
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || "Failed to fetch user");
+
+        setUser({ name: data.name, email: data.email });
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  // Get initials from name
+  const initials = user?.name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase();
+
   return (
     <header className="bg-white border-b border-gray-100 sticky top-0 z-30 h-16 px-4 sm:px-6 lg:px-8 flex items-center justify-between shadow-sm">
       <div className="flex items-center gap-4">
@@ -30,11 +65,15 @@ export function Header({ title, onToggleSidebar }: HeaderProps) {
 
         <div className="flex items-center gap-3 pl-4 border-l border-gray-100">
           <div className="hidden sm:block text-right">
-            <div className="text-sm font-bold text-[#1A1A2E]">John Doe</div>
-            <div className="text-xs text-gray-500">john@example.com</div>
+            <div className="text-sm font-bold text-[#1A1A2E]">
+              {user ? user.name : "Loading..."}
+            </div>
+            <div className="text-xs text-gray-500">
+              {user ? user.email : "Loading..."}
+            </div>
           </div>
           <div className="w-10 h-10 rounded-full bg-[#1A1A2E] text-white flex items-center justify-center font-bold text-sm shadow-md ring-2 ring-white">
-            JD
+            {initials || "JD"}
           </div>
         </div>
       </div>
