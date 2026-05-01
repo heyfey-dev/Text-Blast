@@ -7,7 +7,7 @@ const steps = [
     id: 1,
     title: 'Upload Contacts',
     description:
-      'Import your list from CSV, or add contacts manually in seconds.',
+      'Import your list from CSV,  or add contacts manually in seconds.',
     icon: Upload,
   },
   {

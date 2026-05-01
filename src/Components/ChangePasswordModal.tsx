@@ -26,7 +26,7 @@ export function ChangePasswordModal({
       return
     }
     if (newPass.length < 6) {
-      setError('Password must be at least 6 characters')
+      setError('Password must be at least 7 characters')
       return
     }
     setIsLoading(true)
