@@ -2,13 +2,13 @@
 import React from 'react'
 
 // Landing Page Components
-import { Navbar } from '@/Components/Navbar'
-import { HeroSection } from '@/Components/HeroSection'
-import { HowItWorks } from '@/Components/HowItWorks'
-import { FeaturesSection } from '@/Components/FeaturesSection'
-import { PricingSection } from '@/Components/PricingSection'
-import { TestimonialsSection } from '@/Components/TestimonialsSection'
-import { Footer } from '@/Components/Footer'
+import { Navbar } from '@/Components/shared/Navbar'
+import { HeroSection } from '@/Components/shared/HeroSection'
+import { HowItWorks } from '@/Components/shared/HowItWorks'
+import { FeaturesSection } from '@/Components/shared/FeaturesSection'
+import { PricingSection } from '@/Components/shared/PricingSection'
+import { TestimonialsSection } from '@/Components/shared/TestimonialsSection'
+import { Footer } from '@/Components/shared/Footer'
 
 export default function LandingPage() {
   return (

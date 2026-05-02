@@ -7,7 +7,6 @@ export const metadata: Metadata = {
   applicationName: "TextBlast",
   authors: [{ name: "TextBlast" }],
   keywords: ["TextBlast", "Bulk SMS", "SMS Marketing", "Nigeria", "Messaging Platform"],
-  themeColor: "#FF6B4A",
   metadataBase: new URL("https://text-blast.vercel.app"), // replace later with real domain
 };
 
@@ -16,6 +15,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   viewportFit: "cover",
+   themeColor: "#FF6B4A",
 };
 
 export default function RootLayout({
